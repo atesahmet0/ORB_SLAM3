@@ -536,6 +536,7 @@ namespace ORB_SLAM3 {
         else{
             output << "Kannala-Brandt";
         }
+        return output;
         output << ")" << ": [";
         for(size_t i = 0; i < settings.originalCalib1_->size(); i++){
             output << " " << settings.originalCalib1_->getParameter(i);

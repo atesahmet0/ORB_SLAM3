@@ -32,8 +32,11 @@ Atlas::Atlas(){
 
 Atlas::Atlas(int initKFid): mnLastInitKFidMap(initKFid), mHasViewer(false)
 {
+    cout << "Atlas is about to be initialized";
     mpCurrentMap = static_cast<Map*>(NULL);
+    cout << "static cast is done" << endl;;
     CreateNewMap();
+    cout << "new map has been created" << endl;
 }
 
 Atlas::~Atlas()
@@ -59,21 +62,50 @@ void Atlas::CreateNewMap()
 {
     unique_lock<mutex> lock(mMutexAtlas);
     cout << "Creation of new map with id: " << Map::nNextId << endl;
-    if(mpCurrentMap){
-        if(!mspMaps.empty() && mnLastInitKFidMap < mpCurrentMap->GetMaxKFid())
-            mnLastInitKFidMap = mpCurrentMap->GetMaxKFid()+1; //The init KF is the next of current maximum
+
+    if (mpCurrentMap)
+    {
+        if (!mspMaps.empty() && mnLastInitKFidMap < mpCurrentMap->GetMaxKFid())
+        {
+            mnLastInitKFidMap = mpCurrentMap->GetMaxKFid() + 1; // The init KF is the next of current maximum
+        }
 
         mpCurrentMap->SetStoredMap();
         cout << "Stored map with ID: " << mpCurrentMap->GetId() << endl;
 
-        //if(mHasViewer)
-        //    mpViewer->AddMapToCreateThumbnail(mpCurrentMap);
+        // if (mHasViewer)
+        //     mpViewer->AddMapToCreateThumbnail(mpCurrentMap);
     }
-    cout << "Creation of new map with last KF id: " << mnLastInitKFidMap << endl;
+
+    cout << "mnLastInitKFidMap: " << mnLastInitKFidMap << endl;
+    cout << "Map is about to be created" << endl;
 
     mpCurrentMap = new Map(mnLastInitKFidMap);
-    mpCurrentMap->SetCurrentMap();
+    if (!mpCurrentMap)
+    {
+        cerr << "Failed to allocate memory for new map" << endl;
+        return;
+    }
+
+    cout << "New map has been initialized" << endl;
+
+    // Verify current map state before setting it as current
+    if (mpCurrentMap)
+    {
+        mpCurrentMap->SetCurrentMap();
+        cout << "Current map has been set" << endl;
+    }
+    else
+    {
+        cerr << "mpCurrentMap is null after initialization" << endl;
+        return;
+    }
+
     mspMaps.insert(mpCurrentMap);
+    cout << "Current map has been inserted" << endl;
+
+    // Debugging FrameDrawer creation
+    cout << "verifying Atlas pointer: " << (mpCurrentMap ? "Valid" : "Invalid") << endl;
 }
 
 void Atlas::ChangeMap(Map* pMap)

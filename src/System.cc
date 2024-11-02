@@ -81,7 +81,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mStrLoadAtlasFromFile = settings_->atlasLoadFile();
         mStrSaveAtlasToFile = settings_->atlasSaveFile();
 
-        // cout << (*settings_) << endl;
+        cout << (*settings_) << endl;
     }
     else{
         settings_ = nullptr;
@@ -129,7 +129,9 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
         //Create the Atlas
         cout << "Initialization of Atlas from scratch " << endl;
+        cout << "selam" << endl;
         mpAtlas = new Atlas(0);
+        cout << "Atlas has been created.";
     }
     else
     {
@@ -182,6 +184,11 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mpAtlas->SetInertialSensor();
 
     //Create Drawers. These are used by the Viewer
+    cout << "Frame Drawer is going to be constructed.";
+    if(!mpAtlas)
+    {
+        cout << "mpAtlas is null";
+    }
     mpFrameDrawer = new FrameDrawer(mpAtlas);
     mpMapDrawer = new MapDrawer(mpAtlas, strSettingsFile, settings_);
 
